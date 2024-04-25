@@ -1,5 +1,5 @@
 #include <iostream>
-using std::cout, std::cin, std::endl;
+using namespace std;
 
 class Queue{
 private:
@@ -36,7 +36,7 @@ public:
     }
     void dequeue(){
         if(isEmpty()){
-            cout << "There is nobody in the queue" << endl;
+            cout << "There is nothing in the queue" << endl;
             return;
         }
         if(front == rear){
@@ -52,7 +52,7 @@ public:
             cout << "The queue is empty!" << endl;
             return;
         }
-        for(int i = 0; i < count; i++){
+        for(int i = front; i < count; i++){
             cout << arr[i] << ",";
         }
     }
@@ -82,6 +82,11 @@ public:
         }
         return false;
     }
+    void fill(){
+        for(int i = 0; i < capacity; i++){
+            enqueue(i);
+        }
+    }
     int size(){
         return count;
     }
@@ -90,14 +95,18 @@ public:
 int main(){
     Queue queue(10);
 
-    // Doesn't print the correct values. Required fixing
-    queue.enqueue(20);
+    /*queue.enqueue(20);
     queue.enqueue(10);
     queue.enqueue(15);
+    queue.dequeue();
+    queue.enqueue(50);
+    queue.enqueue(571);*/
+    queue.fill();
+    queue.dequeue();
     queue.full_print();
-    // cout << queue.peek_front() << endl;
-    // cout << queue.peek_back();
-    // cout << queue.isEmpty() << "," << queue.isFull() << queue.peek_back() << queue.peek_front();
+    cout << endl;
+    cout << "Empty: " << queue.isEmpty() << ", Full: " << queue.isFull() << endl;
+    cout << "Front: " << queue.peek_back() << ", Back: " << queue.peek_front();
 
     return 0;
 }
