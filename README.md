@@ -1,0 +1,3 @@
+- My implemention of the queue using circular arrays.
+- I added all the functionality for the queue a user would want.
+- Fun little project
