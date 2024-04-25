@@ -52,8 +52,12 @@ public:
             cout << "The queue is empty!" << endl;
             return;
         }
-        for(int i = front; i < count; i++){
-            cout << arr[i] << ",";
+        for(int i = rear; i >= front; i--){
+            if(i == front){
+              cout << arr[i] << endl;
+              return;
+            }
+            cout << arr[i] << "->";
         }
     }
     int peek_front(){
@@ -90,6 +94,9 @@ public:
     int size(){
         return count;
     }
+    void getFront(){
+      cout << front << endl;
+    }
 };
 
 int main(){
@@ -102,11 +109,15 @@ int main(){
     queue.enqueue(50);
     queue.enqueue(571);*/
     queue.fill();
+    cout << "Front: ";                   queue.getFront();
     queue.dequeue();
+    queue.dequeue();
+    cout << "Front: ";
+    queue.getFront();
     queue.full_print();
     cout << endl;
     cout << "Empty: " << queue.isEmpty() << ", Full: " << queue.isFull() << endl;
-    cout << "Front: " << queue.peek_back() << ", Back: " << queue.peek_front();
+    cout << "Front: " << queue.peek_front() << ", Back: " << queue.peek_back();
 
     return 0;
 }
