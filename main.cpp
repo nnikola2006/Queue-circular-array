@@ -30,7 +30,7 @@ public:
             return;
         }
         // If the array has elementy in it
-        rear = (rear + 1) % count;
+        rear = (rear + 1) % capacity;
         arr[rear] = element;
         count++;
     }
@@ -44,7 +44,7 @@ public:
             count--;
             return;
         }
-        front = (front + 1) % count;
+        front = (front + 1) % capacity;
         count--;
     }
     void full_print(){
