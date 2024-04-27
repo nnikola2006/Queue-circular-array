@@ -1,42 +1,53 @@
 #include <iostream>
-using namespace std;
+#include <stdexcept>
+using std::cout, std::cerr, std::cin, std::endl;
 
 class Queue{
 private:
     int* arr;
-    int front = -1, rear = -1;
-    int capacity = 0, count = 0;
+    int front, rear;
+    int capacity, count;
 public:
-    Queue(const int capacity){
-        arr = new int[capacity];
-        front = 0, rear = 0;
-        this->capacity = capacity;
+    Queue(){
+        front = -1, rear = -1;
+        this->capacity = 5;
+        count = 0;
     }
     ~Queue(){
         delete[] arr;
         arr = nullptr;
     }
-    void enqueue(const int element){
-        // If the array is full
+    int enqueue(const int element){
+        // If the queue is full
         if(isFull()){
-            cout << "Array is full!" << endl;
-            return;
+            cout << "Queue is full." << endl;
+            return 0;
         }
-        // If the array is empty
+        // If the queue is empty
         if(isEmpty()){
-            front = 0, rear = 0;
-            arr[front] = element;
-            count++;
-            return;
+            try{
+                arr = new int[capacity];
+                front = 0, rear = 0;
+                arr[front] = element;
+                count++;
+                return 0;
+            }
+            catch(std::bad_alloc& e){
+                cerr << "Failed to allocate memory for the queue: " << e.what() << endl;
+                return -1;
+            }
         }
-        // If the array has elementy in it
-        rear = (rear + 1) % capacity;
-        arr[rear] = element;
-        count++;
+        else{
+            // If the queue has elements inside
+            rear = (rear + 1) % capacity;
+            arr[rear] = element;
+            count++;
+            return 0;
+        }
     }
     void dequeue(){
         if(isEmpty()){
-            cout << "There is nothing in the queue" << endl;
+            cout << "There is nothing in the queue." << endl;
             return;
         }
         if(front == rear){
@@ -50,7 +61,7 @@ public:
     void print(){
         // Checks if the queue is empty
         if(isEmpty()){
-            cout << "The queue is empty!" << endl;
+            cout << "The queue is empty." << endl;
             return;
         }
         // Prints the elements of the array
@@ -83,7 +94,7 @@ public:
     }
     bool isFull() const{
         // If the rear == front then it's full
-        if(count == capacity){
+        if(count == capacity && count != 0){
             return true;
         }
         return false;
@@ -105,7 +116,7 @@ public:
     }
     void fill(){
         if(isFull()){
-            cout << "Queue is full" << endl;
+            cout << "Queue is full." << endl;
             return;
         }
         // Fills the queue with 0
@@ -116,7 +127,7 @@ public:
     }
     void fill(const int element){
         if(isFull()){
-            cout << "Queue is full" << endl;
+            cout << "Queue is full." << endl;
             return;
         }
         // Fills the array with a specified element
@@ -127,13 +138,13 @@ public:
     }
     void fill(const int element, const int len){
         if(isFull()){
-            cout << "Queue is full" << endl;
+            cout << "Queue is full." << endl;
             return;
         }
         // Fills the array with a specified element up to a certain length
         const int remainingSpace = capacity - count;
         if(remainingSpace < len){
-            cout << "Cannot fill up to that length" << endl;
+            cout << "Cannot fill up to that length." << endl;
             return;
         }
         for(int i = 0; i < len; i++){
@@ -153,7 +164,7 @@ public:
 };
 
 int main(){
-    Queue queue(10);    
+    Queue queue;    
 
     for(int i = 0; i < 6; i++){
         queue.enqueue(i*i);
