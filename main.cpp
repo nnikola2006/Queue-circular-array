@@ -10,25 +10,49 @@ private:
 public:
     Queue(){
         front = -1, rear = -1;
-        this->capacity = 5;
+        this->capacity = 15;
         count = 0;
+    }
+    Queue(const Queue& queue){
+        front = -1, rear = -1;
+        capacity = queue.max_size();
+        count = 0;
+        for(int i = 0; i < queue.count; i++){
+            enqueue(queue.arr[i]);
+        }
     }
     ~Queue(){
         delete[] arr;
         arr = nullptr;
     }
     int enqueue(const int element){
-        // If the queue is full
-        if(isFull()){
-            cout << "Queue is full." << endl;
-            return 0;
-        }
         // If the queue is empty
         if(isEmpty()){
             try{
                 arr = new int[capacity];
                 front = 0, rear = 0;
                 arr[front] = element;
+                count++;
+                return 0;
+            }
+            catch(std::bad_alloc& e){
+                cerr << "Failed to allocate memory for the queue: " << e.what() << endl;
+                return -1;
+            }
+        }
+        // If the queue is full
+        else if(isFull()){
+            try{
+                // Creates a new queue with double the capacity
+                int* newQueue = new int[capacity*2];
+                capacity *= 2;
+                
+                // Copies the elements of the array to the new queue
+                for(int i = 0; i < count; i++){
+                    newQueue[i] = arr[i];
+                }
+                rear = (rear + 1) % capacity;
+                arr[rear] = element;
                 count++;
                 return 0;
             }
@@ -92,6 +116,9 @@ public:
         }
         return -1;
     }
+    int peek_random(int index){
+        return arr[index];
+    }
     bool isFull() const{
         // If the rear == front then it's full
         if(count == capacity && count != 0){
@@ -130,7 +157,7 @@ public:
             cout << "Queue is full." << endl;
             return;
         }
-        // Fills the array with a specified element
+        // Fills the queue with a specified element
         const int remainingSpace = capacity - count;
         for(int i = 0; i < remainingSpace; i++){
             enqueue(element);
@@ -152,6 +179,27 @@ public:
         }
         return;
     }
+    void copy(Queue queue){
+        if(isFull()){
+            cout << "Queue is full." << endl;
+            return;
+        }
+
+        // Fills the queue with the elements of another queue
+        for(int i = 0; i < queue.size(); i++){
+            enqueue(queue.peek_random(i));
+        }
+        /*
+            This solution cannot use &queue otherwise the elements will get
+            deleted and if we dont use the &queue in the parameter we make a
+            copy of the queue which wastes memory so I need to find a better solution
+            
+            while(queue.size() != 0){
+            enqueue(queue.peek_front());
+            queue.dequeue();
+            }
+        */
+    }
     void clear(){
         // Empties the queue
         if(isEmpty()){
@@ -161,17 +209,46 @@ public:
             dequeue();
         }
     }
+    friend void copy(Queue& queue1, Queue& queue2);
 };
+void copy(Queue& queue1, Queue& queue2){
+    if(queue1.isFull()){
+        cout << "Queue is full." << endl;
+        return;
+    }
+
+    // Fills the queue with the elements of another queue
+    for(int i = 0; i < queue2.size(); i++){
+            queue1.enqueue(queue2.peek_random(i));
+    }
+    
+    /*
+        This solution cannot work because it deletes the elements of the queue
+        while(queue2.size() != 0){
+        queue1.enqueue(queue2.peek_front());
+        queue2.dequeue();
+    }
+    */
+}
 
 int main(){
-    Queue queue;    
+    Queue queue1;    
 
-    for(int i = 0; i < 6; i++){
-        queue.enqueue(i*i);
+    cout << "Queue 1:" << endl;
+    queue1.fill(6, 5);
+    for(int i = 0; i < 5; i++){
+        queue1.enqueue(i*i);
     }
-    queue.enqueue(7438);
-    queue.fill(5, 2);
-    queue.full_print();
+    queue1.dequeue();
+    queue1.dequeue();
+    queue1.fill(3);
+    queue1.full_print();
+
+    cout << "\nQueue 2:" << endl;
+    Queue queue2;
+    copy(queue2, queue1);
+    //queue2.copy(queue);
+    queue2.full_print();
 
     return 0;
 }
